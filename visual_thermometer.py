@@ -4,6 +4,7 @@ import adafruit_thermistor     # import libraries required
 import board
 import time
 import neopixel
+from adafruit_circuitplayground import cp
 
 thermistor = adafruit_thermistor.Thermistor(board.TEMPERATURE, 10000, 10000, 22, 3950)
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.01)
@@ -40,7 +41,12 @@ def remapRange(value, leftMin, leftMax, rightMin, rightMax):
  
     # Convert the 0-1 range into a value in the right range.
     return int(rightMin + (valueScaled * rightSpan))
- 
+
+def play_sound(temp)
+    filename = "Sounds/{}.wav".format(int(temp))
+    cp.play_file(filename)
+    time.sleep(10)
+
 while True:
     print("Temperature is: %f C" % (thermistor.temperature))
     # Store thermistor reading as a variable
@@ -58,3 +64,4 @@ while True:
             pixels[i] = wheel(remapRange(i, 0, (n_pixels), 85, 255))
     
     time.sleep(0.5)      # reduces flickering
+    play_sound(temp)
