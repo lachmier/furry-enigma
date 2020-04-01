@@ -1,10 +1,11 @@
- # Visual Thermometer for Adafruit Circuit Playground Express
+# Visual Thermometer for Adafruit Circuit Playground Express
 
 import adafruit_thermistor     # import libraries required
 import board
 import time
 import neopixel
-from adafruit_circuitplayground import cp
+import digitalio
+
 
 thermistor = adafruit_thermistor.Thermistor(board.TEMPERATURE, 10000, 10000, 22, 3950)
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.01)
@@ -14,10 +15,47 @@ pixels.show()
 n_pixels = 10            # Number of pixels you are using
 mintemp = 0              # For adjustment of graph low
 maxtemp = 40             # For adjustment of graph high
- 
+
+
+try:
+    from audiocore import WaveFile
+except ImportError:
+    from audioio import WaveFile
+
+try:
+    from audioio import AudioOut
+except ImportError:
+    try:
+        from audiopwmio import PWMAudioOut as AudioOut
+    except ImportError:
+        pass  # not always supported by every board!
+
+# Enable the speaker
+spkrenable = digitalio.DigitalInOut(board.SPEAKER_ENABLE)
+spkrenable.direction = digitalio.Direction.OUTPUT
+spkrenable.value = True
+
+
+def play_file(filename):
+    print("Playing file: " + filename)
+    wave_file = open(filename, "rb")
+    with WaveFile(wave_file) as wave:
+        with AudioOut(board.SPEAKER) as audio:
+            audio.play(wave)
+            while audio.playing:
+                pass
+    print("Finished")
+
+
+def play_tempval(temp):
+    filename = "{}.wav".format(int(temp))
+    print(filename)
+    #play_file(filename)
+
+
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
-    # The colours are a transition b - g - r - back to b. 
+    # The colours are a transition b - g - r - back to b.
     if (pos < 0) or (pos > 255):
         return (0, 0, 0)
     if (pos < 85):
@@ -28,32 +66,28 @@ def wheel(pos):
     else:
         pos -= 170
         return (int(pos * 3), int(255 - (pos*3)), 0)  # red
-    
- 
+
+
 def remapRange(value, leftMin, leftMax, rightMin, rightMax):
     # this remaps a value from original (left) range to new (right) range
     # Figure out how 'wide' each range is
     leftSpan = leftMax - leftMin
     rightSpan = rightMax - rightMin
- 
+
     # Convert the left range into a 0-1 range (int)
     valueScaled = int(value - leftMin) / int(leftSpan)
- 
+
     # Convert the 0-1 range into a value in the right range.
     return int(rightMin + (valueScaled * rightSpan))
 
-def play_sound(temp)
-    filename = "Sounds/{}.wav".format(int(temp))
-    cp.play_file(filename)
-    time.sleep(10)
 
 while True:
     print("Temperature is: %f C" % (thermistor.temperature))
     # Store thermistor reading as a variable
-    temp = thermistor.temperature 
+    temp = thermistor.temperature
     # Calculate bar height based on adjustable min/max temperature:
     height = n_pixels * (temp - mintemp) / (maxtemp - mintemp)
- 
+
     # Color pixels based on rainbow gradient
     for i in range(0, len(pixels)):
         if (i >= height):
@@ -62,6 +96,7 @@ while True:
             pixels[i] = [255, 0, 0]
         else:
             pixels[i] = wheel(remapRange(i, 0, (n_pixels), 85, 255))
-    
+
     time.sleep(0.5)      # reduces flickering
-    play_sound(temp)
+    play_tempval(temp)
+    time.sleep(6)
