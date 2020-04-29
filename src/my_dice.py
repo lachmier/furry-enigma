@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import random
 import sys
 from PyQt5.QtCore import Qt
