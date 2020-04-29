@@ -1,6 +1,6 @@
 # Visual Thermometer for Adafruit Circuit Playground Express
 
-import adafruit_thermistor     # import libraries required
+import adafruit_thermistor  # import libraries required
 import board
 import time
 import neopixel
@@ -8,13 +8,13 @@ import digitalio
 
 
 thermistor = adafruit_thermistor.Thermistor(board.TEMPERATURE, 10000, 10000, 22, 3950)
-pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.01)
+pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=0.01)
 pixels.fill((0, 0, 0))
 pixels.show()
 
-n_pixels = 10            # Number of pixels you are using
-mintemp = 0              # For adjustment of graph low
-maxtemp = 40             # For adjustment of graph high
+n_pixels = 10  # Number of pixels you are using
+mintemp = 0  # For adjustment of graph low
+maxtemp = 40  # For adjustment of graph high
 
 
 try:
@@ -50,7 +50,7 @@ def play_file(filename):
 def play_tempval(temp):
     filename = "{}.wav".format(int(temp))
     print(filename)
-    #play_file(filename)
+    # play_file(filename)
 
 
 def wheel(pos):
@@ -58,14 +58,14 @@ def wheel(pos):
     # The colours are a transition b - g - r - back to b.
     if (pos < 0) or (pos > 255):
         return (0, 0, 0)
-    if (pos < 85):
-        return (int(255 - pos*3), 0, int(pos*3))  # blue
-    elif (pos < 170):
+    if pos < 85:
+        return (int(255 - pos * 3), 0, int(pos * 3))  # blue
+    elif pos < 170:
         pos -= 85
-        return (0, int(pos*3), int(255 - pos*3))  # green
+        return (0, int(pos * 3), int(255 - pos * 3))  # green
     else:
         pos -= 170
-        return (int(pos * 3), int(255 - (pos*3)), 0)  # red
+        return (int(pos * 3), int(255 - (pos * 3)), 0)  # red
 
 
 def remapRange(value, leftMin, leftMax, rightMin, rightMax):
@@ -90,13 +90,13 @@ while True:
 
     # Color pixels based on rainbow gradient
     for i in range(0, len(pixels)):
-        if (i >= height):
+        if i >= height:
             pixels[i] = [0, 0, 0]
-        elif (temp >= maxtemp):
+        elif temp >= maxtemp:
             pixels[i] = [255, 0, 0]
         else:
             pixels[i] = wheel(remapRange(i, 0, (n_pixels), 85, 255))
 
-    time.sleep(0.5)      # reduces flickering
+    time.sleep(0.5)  # reduces flickering
     play_tempval(temp)
     time.sleep(6)
