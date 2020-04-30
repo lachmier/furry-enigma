@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import random
 import sys
 from PyQt5.QtCore import Qt
@@ -13,7 +14,9 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont
 
 
 # Icons used: "38 Dice Icons" https://game-icons.net/tags/dice.html
-# are Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
+# Icons made by Delapouite, https://delapouite.com
+#
+# Licensed under CC BY 3.0 http://creativecommons.org/licenses/by/3.0/
 
 dice_map = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six"}
 
