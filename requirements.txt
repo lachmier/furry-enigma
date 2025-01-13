@@ -49,5 +49,5 @@ terminaltables==3.1.0
 toml==0.10.0
 typed-ast==1.4.1
 urllib3==1.26.17
-virtualenv==20.0.18
+virtualenv==20.26.6
 wrapt==1.12.1
